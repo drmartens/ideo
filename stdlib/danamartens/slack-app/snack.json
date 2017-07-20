@@ -1,0 +1,11 @@
+[{
+    "user":"test1", 
+    "snackName":"carrots", 
+    "restriction":"bees"
+},
+{
+    "user":"test2", 
+    "snackName":"peas", 
+    "restriction":"ravens"
+}
+]
