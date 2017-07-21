@@ -3,36 +3,52 @@ var baseURL = "http://localhost:8080";
 
 var monthlyBitPricesArray = [];
 var monthlyEthPricesArray = [];
+var monthlyLTCPricesArray = [];
+
 
 var dayOnePriceEth;
 var dayOnePriceBTC;
+var dayOnePriceLTC;
+
 var todayPriceEth;
 var todayPriceBTC;
+var todayPriceLTC;
+
 var priceAPI;
 var weightedToday;
 var weightedDayOne;
 var delta;
 
 
-
-
 var bitcoinAPI = "https://apiv2.bitcoinaverage.com/indices/global/history/BTCUSD?period=monthly&?format=json";
 var ethAPI = "https://apiv2.bitcoinaverage.com/indices/global/history/ETHUSD?period=monthly&?format=json";
+var ltcAPI = "https://apiv2.bitcoinaverage.com/indices/global/history/LTCUSD?period=monthly&?format=json";
+
+
 
 //HTML Assets
 var dayOneResult = document.getElementById('result');
 var todayResult = document.getElementById('ETHresult');
 var calculation = document.getElementById('calculation');
+var compareDayOne = document.getElementById('compareDayOne');
+var compareToday = document.getElementById('compareToday');
+
+var compare = document.getElementById('compareResult');
 
 //Global Variables
 var list = document.getElementById('list');
 var bitAverageMonthly;
 var ethAverageMonthly;
+var ltcAverageMonthly;
+
 var tempPrice = [];
 var tempEthPrice = [];
 var weightedAverage;
+
 var monthlyBitAverage = [];
 var monthlyEthAverage = [];
+var monthlyLTCAverage = [];
+
 
 (function() {
 if (document.readyState != "loading") {
@@ -41,24 +57,25 @@ if (document.readyState != "loading") {
 	getDayOnePrice("ETHUSD");
 	getTodaysPrice("BTCUSD");
 	getTodaysPrice("ETHUSD");
+	getDayOnePrice("LTCUSD");
+	getTodaysPrice("LTCUSD");
 
 
 } else {
 
   document.addEventListener("DOMContentLoaded", function(){
     test();
-    getDayOnePrice("BTCUSD");
+  	getDayOnePrice("BTCUSD");
 	getDayOnePrice("ETHUSD");
 	getTodaysPrice("BTCUSD");
 	getTodaysPrice("ETHUSD");
+	getDayOnePrice("LTCUSD");
+	getTodaysPrice("LTCUSD");
     });
 
  }
 
-// //Create a dictionary to hold a string, and the two symbols to split by
-// function createMyDictionary(string,entryDelimiter,recordDelimiter) {
 	
-// }
 })();
 
 //Test Function for Our BackEnd API
@@ -103,8 +120,17 @@ function getDayOnePrice(coin){
 				tempArray.push(price);
 			}
 			dayOnePriceEth = tempArray[0];
-			console.log("First Day/Hour ETH Price is " + dayOnePriceEth)
+			console.log("First Day/Hour ETH Price is " + dayOnePriceEth);
+		} else if (coin === "LTCUSD"){
+			monthlyLTCPricesArray = res;
+			var tempArray = [];
 
+			for (item of monthlyLTCPricesArray) {
+				var price = item.average;
+				tempArray.push(price);
+			}
+			dayOnePriceLTC = tempArray[0];
+			console.log("First Day/Hour LTC PRice is " + dayOnePriceLTC);
 		}
 
 	})
@@ -143,11 +169,24 @@ priceAPI = "https://apiv2.bitcoinaverage.com/indices/global/history/" + coin + "
 			todayPriceEth = tempArray[tempArray.length - 1]
 			console.log("Today Day/Hour Eth Price is " + todayPriceEth)
 
+		} else if (coin ==="LTCUSD") {
+			monthlyLTCPricesArray = res;
+			var tempArray = [];
+
+			for (item of monthlyLTCPricesArray) {
+				var price = item.average;
+				tempArray.push(price);
+			}
+			todayPriceLTC = tempArray[tempArray.length -1]
+			console.log("Today Day/Hour LTC Price is " + todayPriceLTC)
+
 		}
 
 	})
 
 }
+
+//lightcoin now - lightcoin day one/lightcoin day1
 
 function getWeightedAverageDayOne(dayOneBTCPrice,dayOneEthPrice){
 var weightedBTC = dayOneBTCPrice * .7;
@@ -176,6 +215,14 @@ function calculate() {
 	getWeightedAverageDayOne(dayOnePriceBTC, dayOnePriceEth);
 	getWeightedAverageToday(todayPriceBTC, todayPriceEth);
 	getDelta();
+}
+
+function compareTest() {
+	var LTCMovement = (todayPriceLTC - dayOnePriceLTC)/dayOnePriceLTC;
+	console.log("LTC Movement is " + LTCMovement);
+	compareDayOne.innerHTML = "Day One LTC Price is " + dayOnePriceLTC;
+	compareToday.innerHTML = "Today LTC Price is " + todayPriceLTC;
+	compare.innerHTML = "LTC Market Movement is " + LTCMovement;
 }
 
 
